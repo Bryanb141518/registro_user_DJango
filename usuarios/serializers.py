@@ -132,10 +132,23 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
     # VALIDACION DE MODELO DE NEGOCIO
+    def validate(self, data):
+        edad = data.get('edad')
 
-    def validator(self):
+        if edad < 14:
+            raise serializers.ValidationError({
+                'edad': "No puedes registrarte, debes tener al menos 14 años."
+            })
+
+        if 14 <= edad < 18:
+            # Puede registrarse, pero aplicamos lógica de negocio adicional
+            data['restriccion'] = "Registro con supervisión de tutor"
+
+        return data
+
     # convertir la contrasena a hash antes de guardarla en la bvase de datos
     def create(self, validated_data):
         # Convertir la contraseña en hash antes de guardar
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
+
