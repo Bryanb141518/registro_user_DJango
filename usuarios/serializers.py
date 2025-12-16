@@ -130,19 +130,38 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         return value
 
+    # MODELO DE NEGOCIO
+    #validacio de edad
 
-    # VALIDACION DE MODELO DE NEGOCIO
     def validate(self, data):
         edad = data.get('edad')
+
+        # La lógica de negocio depende de edad se pide la edad por que cuando se actualice la base de datos
+        # puede que el dato se pierda o que este vacio por eso se vuelve a verificar que si este
+        if edad is None:
+            raise serializers.ValidationError({
+                'edad': "La edad es requerida para aplicar las reglas de registro."
+            })
 
         if edad < 14:
             raise serializers.ValidationError({
                 'edad': "No puedes registrarte, debes tener al menos 14 años."
             })
 
-        if 14 <= edad < 18:
-            # Puede registrarse, pero aplicamos lógica de negocio adicional
-            data['restriccion'] = "Registro con supervisión de tutor"
+        if edad < 18:
+            data["mensjae"]= "puedes registrarte pero con ciertas restricciones"
+
+        return data
+
+    # validacionde que nombr ey apellido no pueden ser los mismos
+    def validate(self, data):
+        nombre = data.get('nombre')
+        apellido = data.get('apellido')
+
+        if nombre and apellido and nombre == apellido:
+            raise serializers.ValidationError(
+                "El nombre y el apellido no pueden ser iguales."
+            )
 
         return data
 
