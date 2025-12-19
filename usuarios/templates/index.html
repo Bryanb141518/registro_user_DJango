@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro Profesional</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="registration-container">
+    <div class="header">
+        <h1>Sistema de Registro</h1>
+        <p>Ingrese sus datos para crear una cuenta en el sistema</p>
+    </div>
+
+    <form id="formUsuario">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Ingrese su nombre completo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" placeholder="Ingrese su apellido" required>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" placeholder="usuario@empresa.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" placeholder="Ingrese su edad" required min="14" max="120">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña Segura</label>
+                <input type="password" id="password" placeholder="Mínimo 8 caracteres" required>
+                <div class="password-strength">
+                    <div class="strength-text">Fortaleza de la contraseña</div>
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-section">
+            <button type="submit" class="submit-btn">
+                Crear Cuenta
+            </button>
+            <a href="#" class="login-link">¿Ya tienes una cuenta? Iniciar sesión</a>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'js/app.js' %}"></script>
+<script>
+// Crear partículas flotantes
+function createParticles() {
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        
+        const keyframes = `
+            @keyframes float${i} {
+                0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = keyframes;
+        document.head.appendChild(style);
+        
+        particle.style.animation = `float${i} ${Math.random() * 10 + 10}s linear infinite`;
+        document.body.appendChild(particle);
+    }
+}
+
+// Indicador de fortaleza de contraseña mejorado
+document.getElementById('password').addEventListener('input', function(e) {
+    const password = e.target.value;
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.querySelector('.strength-text');
+    
+    let strength = 0;
+    let strengthLabel = 'Muy débil';
+    
+    if (password.length >= 8) strength += 20;
+    if (/[A-Z]/.test(password)) strength += 20;
+    if (/[a-z]/.test(password)) strength += 20;
+    if (/[0-9]/.test(password)) strength += 20;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+    
+    if (strength >= 80) strengthLabel = 'Muy fuerte';
+    else if (strength >= 60) strengthLabel = 'Fuerte';
+    else if (strength >= 40) strengthLabel = 'Moderada';
+    else if (strength >= 20) strengthLabel = 'Débil';
+    
+    strengthFill.style.width = strength + '%';
+    strengthText.textContent = `Fortaleza: ${strengthLabel}`;
+});
+
+// Inicializar partículas
+createParticles();
+
+// Efecto de typing en el título
+const title = document.querySelector('.header h1');
+const originalText = title.textContent;
+title.textContent = '';
+
+let i = 0;
+function typeWriter() {
+    if (i < originalText.length) {
+        title.textContent += originalText.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+    }
+}
+
+setTimeout(typeWriter, 500);
+</script>
+</body>
+</html>

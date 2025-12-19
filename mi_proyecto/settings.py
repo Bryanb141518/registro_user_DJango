@@ -97,6 +97,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "usuarios/static",
+]
+
 # Django Axes: bloqueo de intentos fallidos
 AXES_FAILURE_LIMIT = 5        # Número de intentos fallidos permitidos
 AXES_COOLOFF_TIME = 1         # Tiempo de bloqueo en horas
