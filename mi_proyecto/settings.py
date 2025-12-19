@@ -26,12 +26,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuarios',       # Tu app de usuarios
-    'axes',           # Bloqueo de intentos fallidos
+    'usuarios',
+    'rest_framework',  # 👈 ESTA LÍNEA
+    # Tu app de usuarios           # Bloqueo de intentos fallidos
 ]
 
 MIDDLEWARE = [
-    'axes.middleware.AxesMiddleware',   # Debe ir arriba o al inicio
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

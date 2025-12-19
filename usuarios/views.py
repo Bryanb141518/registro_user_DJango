@@ -35,3 +35,45 @@ class UsuarioView(APIView):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+
+    def put(self, request, id):
+        try:
+            usuario = Usuario.objects.get(id=id)
+        except Usuario.DoesNotExist:
+            return Response(
+                {"error": "Usuario no encontrado"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+# se crea la variable y se llama a la clase usuario se llama a la varible de try y de entregan los datos
+# que pase los datos  al serilize y con portial va a remplazar los datos que el usario mande
+
+        serializer = UsuarioSerializer(
+            usuario,
+            data=request.data,
+            partial=True  # permite actualizar solo algunos campos
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"mensaje": "Usuario actualizado correctamente"},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def delete(self, request, id):
+        try:
+            usuario = Usuario.objects.get(id=id)
+            usuario.delete()
+            return Response(
+                {"mensaje": "Usuario eliminado correctamente"},
+                status=status.HTTP_200_OK
+            )
+        except Usuario.DoesNotExist:
+            return Response(
+                {"error": "Usuario no encontrado"},
+                status=status.HTTP_404_NOT_FOUND
+            )

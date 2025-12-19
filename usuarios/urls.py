@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import RegistroUsuarioView
+from .views import UsuarioView
 
 urlpatterns = [
-    path('registro/', RegistroUsuarioView.as_view()),
+    path('', UsuarioView.as_view()),
+    path('<int:id>/', UsuarioView.as_view()),
 ]
