@@ -6,7 +6,7 @@ from .serializers import UsuarioSerializer
 from .models import Usuario
 
 def index(request):
-    return render(request, "index.html")
+    return render(request, "assets/index.html")
 
 class UsuarioView(APIView):
 
