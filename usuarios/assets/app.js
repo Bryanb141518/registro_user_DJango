@@ -9,7 +9,7 @@ document.getElementById("formUsuario").addEventListener("submit", function (e) {
         password: document.getElementById("password").value
     }
 
-    fetch("http://127.0.0.1:8000/api/usuarios/", {
+    fetch("http://192.168.1.11:8000/api/usuarios/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

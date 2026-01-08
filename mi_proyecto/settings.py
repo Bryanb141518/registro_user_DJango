@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-82k@_u%ma3v2mbcv*tqbs1sbdx10ujdx^v^nhyu+0mi%y%@&p5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.11', 'localhost']
 
 
 # Application definition
@@ -30,6 +30,11 @@ INSTALLED_APPS = [
     'rest_framework',  # 👈 ESTA LÍNEA
     # Tu app de usuarios           # Bloqueo de intentos fallidos
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -46,7 +51,7 @@ ROOT_URLCONF = 'mi_proyecto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "usuarios/assets"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -98,7 +103,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "usuarios/static",
+    BASE_DIR / "usuarios/assets",
 ]
 
 # Django Axes: bloqueo de intentos fallidos
@@ -106,3 +111,11 @@ AXES_FAILURE_LIMIT = 5        # Número de intentos fallidos permitidos
 AXES_COOLOFF_TIME = 1         # Tiempo de bloqueo en horas
 AXES_LOCKOUT_CALLABLE = None  # Opcional: función para personalizar bloqueo
 AXES_ONLY_USER_FAILURES = True # Bloquea por usuario en vez de IP
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'bryanbenitez809@gmail.com'       # tu correo real
+EMAIL_HOST_PASSWORD = 'dfotxgjxovhqxhtd'        # contraseña o app password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

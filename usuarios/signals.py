@@ -1,36 +1,44 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from django.core.mail import send_mail
 from .models import Usuario
 
-@receiver(post_save, sender=Usuario)
-def usuario_creado(sender, instance, created, **kwargs):
-    """
-    Signal que se ejecuta después de guardar un Usuario
-    """
-    if created:
-        print(f"Nuevo usuario creado: {instance.nombre} {instance.apellido}")
-        print(f"Email: {instance.correo}")
-        print(f"Edad: {instance.edad}")
-        # Aquí puedes agregar más lógica:
-        # - Enviar email de bienvenida
-        # - Crear perfil automáticamente
-        # - Registrar en logs
-        # - Notificar a administradores
 
+# ----------------------------
+# pre_save: antes de guardar
+# ----------------------------
 @receiver(pre_save, sender=Usuario)
-def antes_guardar_usuario(sender, instance, **kwargs):
+def formatear_nombre_apellido(sender, instance, **kwargs):
     """
-    Signal que se ejecuta antes de guardar un Usuario
+    Se ejecuta antes de guardar un Usuario
+    Formatea nombre y apellido: primera letra mayúscula, elimina espacios
     """
-    # Formatear nombre y apellido automáticamente
     if instance.nombre:
         instance.nombre = instance.nombre.strip().title()
     if instance.apellido:
         instance.apellido = instance.apellido.strip().title()
-    
-    print(f"Preparando para guardar usuario: {instance.nombre} {instance.apellido}")
-    
-    # Aquí puedes agregar más lógica:
-    # - Validaciones adicionales
-    # - Formateo de datos
-    # - Auditoría de cambios
+
+
+# ----------------------------
+# post_save: después de guardar
+# ----------------------------
+@receiver(post_save, sender=Usuario)
+def enviar_correo_bienvenida(sender, instance, created, **kwargs):
+    """
+    Se ejecuta después de guardar un Usuario
+    Envía un correo de bienvenida si se creó un nuevo usuario
+    """
+    if created:
+        asunto = "¡Bienvenido a MiApp!"
+        mensaje = f"Hola {instance.nombre},\n\nGracias por registrarte en nuestra plataforma."
+        destinatario = [instance.correo]  # email del usuario
+
+        send_mail(
+            subject=asunto,
+            message=mensaje,
+            from_email=None,  # usará DEFAULT_FROM_EMAIL del settings
+            recipient_list=destinatario,
+            fail_silently=False,  # muestra error si algo falla
+        )
+
+        print(f"Correo de bienvenida enviado a {instance.correo}")
