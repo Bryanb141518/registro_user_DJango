@@ -7,17 +7,31 @@ from django.utils.decorators import method_decorator
 from .serializers import UsuarioSerializer
 from .models import Usuario
 
+#mostrar la pagina web en el navegador
 def index(request):
     return render(request, "index.html")
-
+# para ignorar el token que se debe pasa en js e ir directamente a saber que meto utilizar
 @method_decorator(csrf_exempt, name='dispatch')
 class UsuarioView(APIView):
 
-    # GET: obtener todos los usuarios
-    def get(self, request):
-        usuarios = Usuario.objects.all()
-        serializer = UsuarioSerializer(usuarios, many=True)
-        return Response({"usuarios": serializer.data}, status=status.HTTP_200_OK)
+    # GET: obtener todos los usuarios o uno específico por ID
+    def get(self, request, id=None):
+        if id:
+            # GET /api/usuarios/5/ → Un usuario específico
+            try:
+                usuario = Usuario.objects.get(id=id)
+                serializer = UsuarioSerializer(usuario)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Usuario.DoesNotExist:
+                return Response(
+                    {"error": "Usuario no encontrado"}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            # GET /api/usuarios/ → Todos los usuarios
+            usuarios = Usuario.objects.all()
+            serializer = UsuarioSerializer(usuarios, many=True)
+            return Response({"usuarios": serializer.data}, status=status.HTTP_200_OK)
 
 
 
@@ -84,3 +98,4 @@ class UsuarioView(APIView):
                 {"error": "Usuario no encontrado"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
