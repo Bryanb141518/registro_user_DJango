@@ -1,8 +1,12 @@
-from django.urls import path
-from .views import UsuarioView, index
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import UsuarioViewSet, index
+
+# Router automático para ViewSet
+router = DefaultRouter()
+router.register(r'', UsuarioViewSet)
 
 urlpatterns = [
-    path('', UsuarioView.as_view()),
-    path('<int:id>/', UsuarioView.as_view()),
+    path('', include(router.urls)),
     path('frontend/', index, name='frontend'),
 ]
