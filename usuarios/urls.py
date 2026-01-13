@@ -4,7 +4,7 @@ from .views import UsuarioViewSet, index
 
 # Router automático para ViewSet
 router = DefaultRouter()
-router.register(r'', UsuarioViewSet)
+router.register(r'api', UsuarioViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
