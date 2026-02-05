@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'usuarios',
-    'rest_framework',  # 👈 ESTA LÍNEA
+    'rest_framework',  #  ESTA LÍNEA
     # Tu app de usuarios           # Bloqueo de intentos fallidos
 ]
 
@@ -119,3 +119,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'bryanbenitez809@gmail.com'       # tu correo real
 EMAIL_HOST_PASSWORD = 'dfotxgjxovhqxhtd'        # contraseña o app password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+AUTH_USER_MODEL = 'usuarios.Usuario'

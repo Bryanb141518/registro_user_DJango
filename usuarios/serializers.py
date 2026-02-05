@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from .models import Usuario
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
 #modulo de expresiones irregulares
 import re
 # crear un hassh para que la contrasena no se guarde tal cual sino como un algoritmo
@@ -76,23 +80,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return value
 
     #validacion de correo
-    def validate_correo(self,value):
-        # eliminacion de los espacios vacios al principio y al final del dato
-        value = value.strip()
-
-        # si quieres un mensaje personalizado para obligatorio
-        if not value:
-            raise serializers.ValidationError('El correo es obligatorio')
-
-        #validacion de que correo es obligatorio
-        if Usuario.objects.filter(correo=value).exists():
-            raise serializers.ValidationError("Este correo ya está registrado")
-        # ya se valida en el model los siguentes errores
-        # no puede ir vacio
-        # se valida que tenga el formato de correo
-        # verificacion de que no exista otra persona con el mismo correo
-
-        return value
+    correo = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=Usuario.objects.all(),
+            message="Este correo ya está registrado"
+        )]
+    )
+    password = serializers.CharField(write_only=True)
 
     # validacion de password
     def validate_password(self,value):
@@ -150,7 +144,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             })
 
         if edad < 18:
-            data["mensaje"] = "Puedes registrarte pero con ciertas restricciones"
+            data['aviso'] = "Puedes registrarte pero con ciertas restricciones"
 
         # Validación nombre y apellido
         if nombre and apellido and nombre == apellido:
@@ -166,3 +160,32 @@ class UsuarioSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
         return super().create(validated_data)
 
+class LoginSerializer(serializers.Serializer):
+    correo = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        correo = data.get('correo')
+        password = data.get('password')
+
+        if correo and password :
+            user = authenticate(username=correo, password=password)
+
+            if user:
+                if user.is_active:
+                    refresh = RefreshToken.for_user(user)
+                    return{
+                        'user_id': user.id,
+                        'nombre': user.nombre,
+                        'apellido': user.apellido,
+                        'correo': user.correo,
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'mensaje': 'Login exitoso'
+                    }
+                else:
+                    raise serializers.ValidationError("cuenta desactivada")
+            else:
+                raise serializers.ValidationError("cuenta desactivada")
+        else:
+            raise serializers.ValidationError("cuenta desactivada")
